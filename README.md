@@ -12,8 +12,6 @@ List of main packages used
 
 ## Getting Started
 For Run
-
-* 
   ```sh
   go run main.go
   ```
