@@ -1,23 +1,29 @@
 package controllers
 
 import (
+	"ToDo/db"
 	"ToDo/models"
+	"ToDo/repository"
+	"ToDo/responses"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
-var toDos = []models.ToDo{
-	{Id: 1, Content: "First ToDo", IsChecked: false, IsDeleted: false},
-	{Id: 2, Content: "Second ToDo", IsChecked: false, IsDeleted: false},
-}
+var DB *gorm.DB = db.Init()
+var h repository.ToDoRepository = repository.New(DB)
 
 func GetAll(c *fiber.Ctx) error {
-	if len(toDos) <= 0 {
-		return c.Status(http.StatusNoContent).JSON(("no data!"))
+	results, err := h.GetAll()
+
+	if err != nil {
+		fmt.Println(err)
 	}
-	return c.Status(http.StatusOK).JSON(toDos)
+
+	return c.Status(http.StatusOK).JSON(responses.ToDoResponse{Status: http.StatusOK, Message: "Success", Data: &fiber.Map{"ToDos": results}})
 }
 
 func Post(c *fiber.Ctx) error {
@@ -26,11 +32,12 @@ func Post(c *fiber.Ctx) error {
 	if err := c.BodyParser(&newToDo); err != nil {
 		return c.Status(http.StatusBadRequest).JSON("Bad Request")
 	}
-	newToDo.Id = len(toDos) + 1
-	newToDo.IsChecked = false
-	newToDo.IsDeleted = false
-	toDos = append(toDos, newToDo)
-	return c.Status(http.StatusCreated).JSON("Created")
+
+	results, err := h.Post(newToDo)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return c.Status(http.StatusCreated).JSON(responses.ToDoResponse{Status: http.StatusCreated, Message: "Success", Data: &fiber.Map{"ToDo": results}})
 }
 
 func Put(c *fiber.Ctx) error {
@@ -40,31 +47,24 @@ func Put(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON("Bad Request")
 	}
 
-	for i, element := range toDos {
-		if element.Id == newToDo.Id {
-			element.Content = newToDo.Content
-			element.IsChecked = newToDo.IsChecked
-			toDos = append(toDos[:i], toDos[i+1:]...)
-			toDos = append(toDos, element)
-		}
+	results, err := h.Put(newToDo)
+	if err != nil {
+		fmt.Println(err)
 	}
 
-	return c.Status(http.StatusOK).JSON("Updated")
+	return c.Status(http.StatusOK).JSON(responses.ToDoResponse{Status: http.StatusOK, Message: "Success", Data: &fiber.Map{"ToDo": results}})
 }
 
 func Delete(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 
 	if err != nil {
-		return c.Status(http.StatusNotAcceptable).JSON(err)
+		return c.Status(http.StatusNotAcceptable).JSON("Bad Request")
 	}
 
-	for i, element := range toDos {
-		if element.Id == id {
-			element.IsDeleted = true
-			toDos = append(toDos[:i], toDos[i+1:]...)
-			toDos = append(toDos, element)
-		}
+	err = h.Delete(uint(id))
+	if err != nil {
+		fmt.Println(err)
 	}
-	return c.Status(http.StatusOK).JSON("Deleted")
+	return c.Status(http.StatusOK).JSON(responses.ToDoResponse{Status: http.StatusOK, Message: "Success", Data: &fiber.Map{"ToDo": id}})
 }
