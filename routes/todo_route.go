@@ -2,13 +2,14 @@ package routes
 
 import (
 	"ToDo/controllers"
+	"ToDo/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func Setup(app *fiber.App) {
-	api := app.Group("/api")
-	api.Get("/", controllers.GetAll)
+	app.Get("/", controllers.GetAll)
+	api := app.Group("/ToDo", middleware.Authorize())
 	api.Post("/", controllers.Post)
 	api.Put("/", controllers.Put)
 	api.Delete("/:id", controllers.Delete)
