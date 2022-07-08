@@ -6,9 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ToDoRoute(app *fiber.App) {
-	app.Get("/", controllers.GetAll)
-	app.Post("/", controllers.Post)
-	app.Put("/", controllers.Put)
-	app.Delete("/:id", controllers.Delete)
+func Setup(app *fiber.App) {
+	api := app.Group("/api")
+	api.Get("/", controllers.GetAll)
+	api.Post("/", controllers.Post)
+	api.Put("/", controllers.Put)
+	api.Delete("/:id", controllers.Delete)
 }

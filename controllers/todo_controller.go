@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"ToDo/db"
 	"ToDo/models"
 	"ToDo/repository"
 	"ToDo/responses"
@@ -10,14 +9,12 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
-var DB *gorm.DB = db.Init()
-var h repository.ToDoRepository = repository.New(DB)
+var toDoRepository repository.ToDoRepository = repository.New()
 
 func GetAll(c *fiber.Ctx) error {
-	results, err := h.GetAll()
+	results, err := toDoRepository.GetAll()
 
 	if err != nil {
 		fmt.Println(err)
@@ -33,7 +30,7 @@ func Post(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON("Bad Request")
 	}
 
-	results, err := h.Post(newToDo)
+	results, err := toDoRepository.Post(newToDo)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -47,7 +44,7 @@ func Put(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON("Bad Request")
 	}
 
-	results, err := h.Put(newToDo)
+	results, err := toDoRepository.Put(newToDo)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -62,7 +59,7 @@ func Delete(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotAcceptable).JSON("Bad Request")
 	}
 
-	err = h.Delete(uint(id))
+	err = toDoRepository.Delete(uint(id))
 	if err != nil {
 		fmt.Println(err)
 	}

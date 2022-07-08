@@ -1,13 +1,16 @@
 package main
 
 import (
+	"ToDo/db"
 	"ToDo/routes"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
+	db.Init()
 	app := fiber.New()
-	routes.ToDoRoute(app)
-	app.Listen("0.0.0.0:1938")
+
+	routes.Setup(app)
+	app.Listen(":1938")
 }

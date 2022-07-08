@@ -7,14 +7,17 @@ import (
 	"gorm.io/gorm"
 )
 
-func Init() *gorm.DB {
+var DB *gorm.DB
+
+func Init() {
 	dsn := "host=localhost user=postgres password=12345 dbname=todo port=5432 sslmode=disable TimeZone=Europe/Istanbul"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		panic(err)
+		panic("Could not connect to the PostgreSQL database.")
 	}
 
+	DB = db
+
 	db.AutoMigrate(&models.ToDo{})
-	return db
 }
