@@ -6,7 +6,6 @@ import (
 	"ToDo/responses"
 	"fmt"
 	"net/http"
-	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -53,7 +52,7 @@ func Put(c *fiber.Ctx) error {
 }
 
 func Delete(c *fiber.Ctx) error {
-	id, err := strconv.Atoi(c.Params("id"))
+	id, err := c.ParamsInt("id")
 
 	if err != nil {
 		return c.Status(http.StatusNotAcceptable).JSON("Bad Request")
