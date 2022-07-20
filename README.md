@@ -9,7 +9,7 @@ It is a web application that I developed practically to improve myself on Go.
 List of main packages used
 
 * [GoFiber](https://github.com/gofiber/fiber)
-** asd
+- asd
 * [GORM](https://github.com/go-gorm/gorm) with [Postgres Driver](https://github.com/go-gorm/postgres)
 * [GoDotEnv](https://github.com/joho/godotenv)
 
