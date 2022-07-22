@@ -1,6 +1,7 @@
 package configs
 
 import (
+	"log"
 	"path"
 	"runtime"
 
@@ -11,5 +12,8 @@ func SetEnv() {
 	_, filename, _, _ := runtime.Caller(0)
 	dir := path.Join(path.Dir(filename), "..")
 
-	godotenv.Load(dir + "\\.env")
+	err := godotenv.Load(path.Join(dir, ".env"))
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
 }
